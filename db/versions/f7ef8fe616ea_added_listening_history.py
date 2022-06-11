@@ -2,7 +2,7 @@
 Added 'listening_history' table.
 
 Revision ID: f7ef8fe616ea
-Revises: 
+Revises:
 Create Date: 2022-06-11 17:38:55.706755
 
 """

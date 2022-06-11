@@ -38,7 +38,7 @@ class ListeningHistoryRepository:
     def last_played_at(self, user: User) -> datetime:
         return self._session.execute(
             f"""
-                SELECT COALESCE(MAX(played_at), CURRENT_DATE) 
+                SELECT COALESCE(MAX(played_at), CURRENT_DATE)
                 FROM {self.table_name}
                 WHERE user_id = :user_id;
             """,  # type: ignore
