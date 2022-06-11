@@ -1,3 +1,4 @@
+import os
 from logging.config import fileConfig
 
 from alembic import context
@@ -6,7 +7,6 @@ from sqlmodel import (
     create_engine,
 )
 
-from db.orm import DATABASE_URL
 from src.models.db import ListeningHistory
 
 # this is the Alembic Config object, which provides
@@ -51,7 +51,7 @@ def run_migrations_offline() -> None:
 
     """
     context.configure(
-        url=DATABASE_URL,
+        url=os.environ.get("DATABASE_URL"),
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -68,7 +68,7 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    connectable = create_engine(DATABASE_URL)
+    connectable = create_engine(os.environ.get("DATABASE_URL"))
 
     with connectable.connect() as connection:
         context.configure(

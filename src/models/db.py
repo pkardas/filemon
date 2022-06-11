@@ -1,6 +1,12 @@
-from datetime import datetime
+from datetime import (
+    date,
+    datetime,
+)
+from typing import (
+    Type,
+    cast,
+)
 
-from sqlalchemy import UniqueConstraint
 from sqlmodel import (
     Field,
     SQLModel,
@@ -16,3 +22,11 @@ class ListeningHistory(SQLModel, table=True):
     user_id: str = Field(primary_key=True, index=True)
     track_uri: str = Field(primary_key=True)
     played_at: datetime = Field(primary_key=True, index=True)
+
+
+def table_name(table: Type[SQLModel]) -> str:
+    return cast(str, table.__tablename__)
+
+
+def partition_name(table: Type[SQLModel], day: date) -> str:
+    return f"{table_name(table)}_{day.isoformat().replace('-', '_')}"
