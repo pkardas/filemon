@@ -1,8 +1,7 @@
 import os
 
-from gateways.auth import AUTH_URL
-from gateways.spotify import PersonalSpotify
+from gateways.spotify import Spotify
 
-print(AUTH_URL)
-us = PersonalSpotify(os.getenv("SPOTIFY_RESPONSE"))
-print(us.get_loved_tracks())
+us = Spotify(os.getenv("SPOTIFY_CODE"))
+for item in us.recently_played().items:
+    print(item.track.name, item.played_at)
