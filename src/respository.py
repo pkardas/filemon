@@ -1,7 +1,6 @@
 import os
 from datetime import (
     date,
-    datetime,
     timedelta,
 )
 from functools import partial
@@ -11,12 +10,12 @@ from sqlmodel import (
     create_engine,
 )
 
-from models.db import (
+from src.models.db import (
     ListeningHistory,
     partition_name,
     table_name,
 )
-from models.spotify import (
+from src.models.spotify import (
     RecentlyPlayedItem,
     User,
 )
@@ -35,21 +34,12 @@ class ListeningHistoryRepository:
     def __init__(self, session: Session) -> None:
         self._session = session
 
-    def last_played_at(self, user: User) -> datetime:
-        return self._session.execute(
-            f"""
-                SELECT COALESCE(MAX(played_at), CURRENT_DATE)
-                FROM {self.table_name}
-                WHERE user_id = :user_id;
-            """,  # type: ignore
-            {"user_id": user.id}
-        ).scalar()
-
     def add(self, user: User, played_item: RecentlyPlayedItem) -> None:
         self._session.execute(
             f"""
                 INSERT INTO {self.partition_name(played_item.played_at.date())} (user_id, track_uri, played_at)
-                VALUES (:user_id, :track_uri, :played_at);
+                VALUES (:user_id, :track_uri, :played_at)
+                ON CONFLICT DO NOTHING;
             """,  # type: ignore
             {"user_id": user.id, "track_uri": played_item.track.uri, "played_at": played_item.played_at}
         )

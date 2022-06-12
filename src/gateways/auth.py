@@ -8,8 +8,6 @@ from spotipy import (
 
 SCOPE = ["user-library-read", "user-read-recently-played", "playlist-modify-private"]
 
-AUTH_URL = SpotifyOAuth(scope=SCOPE).get_authorize_url()
-
 
 class FilemonSpotifyOAuth(SpotifyOAuth):
     def __init__(self, scope: List[str], spotify_response: str):

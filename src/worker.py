@@ -1,35 +1,29 @@
-import calendar
 import os
-from datetime import (
-    date,
-    datetime,
-    timedelta,
-)
-from typing import List
+from datetime import date
+from typing import Set
 
-from gateways.spotify import Spotify
-from respository import (
+from src.gateways.spotify import Spotify
+from src.respository import (
     ListeningHistoryRepository,
     default_session,
 )
+from src.models.spotify import RecentlyPlayed
 
 
-def get_days(start: datetime, end: datetime) -> List[date]:
-    assert end >= start, "Start has to be before End"
-    return [(start + timedelta(days=i)).date() for i in range((end - start).days + 1)]
+def get_days(recently_played: RecentlyPlayed) -> Set[date]:
+    return {item.played_at.date() for item in recently_played.items}
 
 
 def main():
     repository = ListeningHistoryRepository(session=default_session())
     spotify = Spotify(os.getenv("SPOTIFY_CODE"))
+    recently_played = spotify.recently_played()
 
-    for day in get_days(start=repository.last_played_at(spotify.user), end=datetime.now()):
+    for day in get_days(recently_played):
         repository.create_partition(day)
 
-        timestamp = calendar.timegm(repository.last_played_at(spotify.user).utctimetuple())
-
-        for item in spotify.recently_played(after=timestamp).items:
-            repository.add(spotify.user, item)
+    for item in recently_played.items:
+        repository.add(spotify.user, item)
 
     repository.commit()
 

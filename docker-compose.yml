@@ -16,3 +16,14 @@ services:
       - POSTGRES_DB=filemon
     ports:
       - '5432:5432'
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: uvicorn api:app --host 0.0.0.0 --reload
+    volumes:
+      - ./:/src
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"

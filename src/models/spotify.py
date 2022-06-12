@@ -49,9 +49,9 @@ class LovedTracksItem(BaseModel):
 
 class RecentlyPlayed(BaseModel):
     items: List[RecentlyPlayedItem]
-    cursors: Cursor
+    cursors: Optional[Cursor]
     limit: int
-    next: str
+    next: Optional[str]
 
 
 class LovedTracks(BaseModel):

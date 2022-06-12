@@ -13,3 +13,4 @@ RUN pip install -r requirements-all.txt
 
 COPY src/ src/
 COPY tests/ tests/
+COPY api.py .
