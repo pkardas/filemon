@@ -1,31 +1,20 @@
-import os
-from datetime import date
-from typing import Set
-
-from src.gateways.spotify import Spotify
-from src.respository import (
-    ListeningHistoryRepository,
-    default_session,
+from datetime import (
+    datetime,
 )
-from src.models.spotify import RecentlyPlayed
 
+from src.message_bus.bus import MessageBus
+from src.models.bus import (
+    FetchListeningHistory,
+    UpdatePartitions,
+)
+from src.repositories.unit_of_work import UnitOfWork
 
-def get_days(recently_played: RecentlyPlayed) -> Set[date]:
-    return {item.played_at.date() for item in recently_played.items}
+bus = MessageBus(uow=UnitOfWork())
 
 
 def main():
-    repository = ListeningHistoryRepository(session=default_session())
-    spotify = Spotify(os.getenv("SPOTIFY_CODE"))
-    recently_played = spotify.recently_played()
-
-    for day in get_days(recently_played):
-        repository.create_partition(day)
-
-    for item in recently_played.items:
-        repository.add(spotify.user, item)
-
-    repository.commit()
+    bus.handle(UpdatePartitions(day=datetime.now().date()))
+    bus.handle(FetchListeningHistory())
 
 
 if __name__ == '__main__':
