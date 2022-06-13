@@ -1,6 +1,4 @@
-from datetime import (
-    datetime,
-)
+from datetime import datetime
 
 from src.message_bus.bus import MessageBus
 from src.models.bus import (
@@ -9,13 +7,11 @@ from src.models.bus import (
 )
 from src.repositories.unit_of_work import UnitOfWork
 
-bus = MessageBus(uow=UnitOfWork())
 
-
-def main():
+def run(bus=MessageBus(uow=UnitOfWork())):
     bus.handle(UpdatePartitions(day=datetime.now().date()))
     bus.handle(FetchListeningHistory())
 
 
 if __name__ == '__main__':
-    main()
+    run()

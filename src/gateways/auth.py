@@ -6,7 +6,7 @@ from spotipy import (
     SpotifyStateError,
 )
 
-SCOPE = ["user-library-read", "user-read-recently-played", "playlist-modify-private"]
+SCOPE = ["playlist-modify-private", "user-library-read", "user-read-recently-played"]
 
 
 class FilemonSpotifyOAuth(SpotifyOAuth):
