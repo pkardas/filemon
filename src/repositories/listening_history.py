@@ -6,21 +6,21 @@ from functools import partial
 
 from src.models.db import (
     ListeningHistory,
-    partition_name,
-    table_name,
+    get_partition_name,
+    get_table_name,
 )
 from src.models.spotify import (
     RecentlyPlayedItem,
-    User,
+    SpotifyUser,
 )
 from src.repositories.repository import Repository
 
 
 class ListeningHistoryRepository(Repository):
-    table_name = table_name(ListeningHistory)
-    partition_name = partial(partition_name, ListeningHistory)
+    table_name = get_table_name(ListeningHistory)
+    partition_name = partial(get_partition_name, ListeningHistory)
 
-    def add(self, user: User, played_item: RecentlyPlayedItem) -> None:
+    def add(self, user: SpotifyUser, played_item: RecentlyPlayedItem) -> None:
         self.session.execute(
             f"""
                 INSERT INTO {self.partition_name(played_item.played_at.date())} (user_id, track_uri, played_at)

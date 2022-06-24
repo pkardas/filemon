@@ -13,6 +13,7 @@ from sqlmodel import (
 )
 
 from src.repositories.listening_history import ListeningHistoryRepository
+from src.repositories.users import UsersRepository
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
@@ -23,6 +24,7 @@ def default_session():
 
 class AbstractUnitOfWork(ABC):
     listening_history: ListeningHistoryRepository
+    users: UsersRepository
 
     def __enter__(self) -> AbstractUnitOfWork:
         return self
@@ -34,6 +36,10 @@ class AbstractUnitOfWork(ABC):
         for item in self.listening_history.queue:
             yield item
         self.listening_history.queue = []
+
+        for item in self.users.queue:
+            yield item
+        self.users.queue = []
 
     def commit(self):
         self._commit()
@@ -57,6 +63,7 @@ class UnitOfWork(AbstractUnitOfWork):
 
     def __enter__(self):
         self.listening_history = ListeningHistoryRepository(self.session)
+        self.users = UsersRepository(self.session)
         return super().__enter__()
 
     def __exit__(self, *args):

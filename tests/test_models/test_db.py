@@ -4,8 +4,8 @@ import pytest
 
 from src.models.db import (
     ListeningHistory,
-    partition_name,
-    table_name,
+    get_partition_name,
+    get_table_name,
 )
 
 
@@ -13,7 +13,7 @@ from src.models.db import (
     (ListeningHistory, "listening_history")
 ])
 def test_table_name(table, expected_result):
-    assert table_name(table) == expected_result
+    assert get_table_name(table) == expected_result
 
 
 @pytest.mark.parametrize("table, day, expected_result", [
@@ -23,4 +23,4 @@ def test_table_name(table, expected_result):
     # @formatter:on
 ])
 def test_partition_name(table, day, expected_result):
-    assert partition_name(table, day) == expected_result
+    assert get_partition_name(table, day) == expected_result

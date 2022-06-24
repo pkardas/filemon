@@ -2,20 +2,23 @@ import os
 
 from fastapi import APIRouter
 from spotipy import SpotifyOAuth
-from src.gateways.spotify import Spotify
+from starlette.responses import RedirectResponse
 
 from src.gateways.auth import SCOPE
-from src.models.api import SpotifyAuthResponse
+from src.message_bus.bus import MessageBus
+from src.models.bus import AddUser
+from src.repositories.unit_of_work import UnitOfWork
 
 router = APIRouter()
+bus = MessageBus(uow=UnitOfWork())
 
 
-@router.get("/spotify", response_model=SpotifyAuthResponse)
+@router.get("/spotify")
 def spotify():
-    return SpotifyAuthResponse(url=SpotifyOAuth(scope=SCOPE).get_authorize_url())
+    return RedirectResponse(SpotifyOAuth(scope=SCOPE).get_authorize_url())
 
 
 @router.get("/spotify/callback/")
 def spotify_callback(code: str):
-    us = Spotify(f"{os.getenv('SPOTIPY_REDIRECT_URI')}?code={code}")
-    return {"user": us.user.display_name}
+    bus.handle(AddUser(spotify_code=f"{os.getenv('SPOTIPY_REDIRECT_URI')}?code={code}"))
+    return RedirectResponse("https://open.spotify.com/")

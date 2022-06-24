@@ -3,7 +3,7 @@ from datetime import date
 
 from src.models.spotify import (
     RecentlyPlayedItem,
-    User,
+    SpotifyUser,
 )
 
 
@@ -21,7 +21,7 @@ class Event(Message):
 
 @dataclass
 class AddUser(Command):
-    spotify_url: str
+    spotify_code: str
 
 
 @dataclass
@@ -35,5 +35,5 @@ class FetchListeningHistory(Command):
 
 @dataclass
 class UserPlayedMusic(Event):
-    user: User
+    user: SpotifyUser
     recently_played: RecentlyPlayedItem

@@ -24,9 +24,16 @@ class ListeningHistory(SQLModel, table=True):
     played_at: datetime = Field(primary_key=True, index=True)
 
 
-def table_name(table: Type[SQLModel]) -> str:
+class User(SQLModel, table=True):
+    __tablename__ = "users"
+
+    id: str = Field(primary_key=True, index=True)
+    spotify_code: str
+
+
+def get_table_name(table: Type[SQLModel]) -> str:
     return cast(str, table.__tablename__)
 
 
-def partition_name(table: Type[SQLModel], day: date) -> str:
-    return f"{table_name(table)}_{day.isoformat().replace('-', '_')}"
+def get_partition_name(table: Type[SQLModel], day: date) -> str:
+    return f"{get_table_name(table)}_{day.isoformat().replace('-', '_')}"

@@ -68,7 +68,7 @@ class CreatePlaylist(BaseModel):
     public: bool
 
 
-class User(BaseModel):
+class SpotifyUser(BaseModel):
     id: str
     display_name: str
     uri: str
