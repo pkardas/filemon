@@ -6,13 +6,15 @@ from typing import (
     Type,
 )
 
-from src.message_bus import handlers
 from src.message_bus.handlers import (
+    add_playlist,
+    add_user,
     fetch_listening_history,
     update_partitions,
     user_played_music,
 )
 from src.models.bus import (
+    AddPlaylist,
     AddUser,
     Command,
     Event,
@@ -24,7 +26,8 @@ from src.models.bus import (
 from src.repositories.unit_of_work import AbstractUnitOfWork
 
 COMMAND_HANDLERS: Dict[Type[Command], Callable] = {
-    AddUser: handlers.add_user,
+    AddUser: add_user,
+    AddPlaylist: add_playlist,
     UpdatePartitions: update_partitions,
     FetchListeningHistory: fetch_listening_history
 }

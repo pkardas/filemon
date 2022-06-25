@@ -12,6 +12,7 @@ from sqlmodel import (
     create_engine,
 )
 
+from src.repositories.collaborative_playlists import CollaborativePlaylistsRepository
 from src.repositories.listening_history import ListeningHistoryRepository
 from src.repositories.users import UsersRepository
 
@@ -25,6 +26,7 @@ def default_session():
 class AbstractUnitOfWork(ABC):
     listening_history: ListeningHistoryRepository
     users: UsersRepository
+    collaborative_playlists: CollaborativePlaylistsRepository
 
     def __enter__(self) -> AbstractUnitOfWork:
         return self
@@ -40,6 +42,10 @@ class AbstractUnitOfWork(ABC):
         for item in self.users.queue:
             yield item
         self.users.queue = []
+
+        for item in self.collaborative_playlists.queue:
+            yield item
+        self.collaborative_playlists.queue = []
 
     def commit(self):
         self._commit()
@@ -64,6 +70,7 @@ class UnitOfWork(AbstractUnitOfWork):
     def __enter__(self):
         self.listening_history = ListeningHistoryRepository(self.session)
         self.users = UsersRepository(self.session)
+        self.collaborative_playlists = CollaborativePlaylistsRepository(self.session)
         return super().__enter__()
 
     def __exit__(self, *args):

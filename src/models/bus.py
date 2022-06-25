@@ -1,5 +1,9 @@
 from dataclasses import dataclass
 from datetime import date
+from typing import (
+    List,
+    Optional,
+)
 
 from src.models.spotify import (
     RecentlyPlayedItem,
@@ -22,6 +26,12 @@ class Event(Message):
 @dataclass
 class AddUser(Command):
     spotify_code: str
+
+
+@dataclass
+class AddPlaylist(Command):
+    users: List[str]
+    playlist_name: str
 
 
 @dataclass

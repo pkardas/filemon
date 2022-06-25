@@ -3,10 +3,16 @@ from datetime import (
     datetime,
 )
 from typing import (
+    List,
     Type,
     cast,
 )
 
+from sqlalchemy import (
+    ARRAY,
+    Column,
+    String,
+)
 from sqlmodel import (
     Field,
     SQLModel,
@@ -29,6 +35,13 @@ class User(SQLModel, table=True):
 
     id: str = Field(primary_key=True, index=True)
     spotify_code: str
+
+
+class CollaborativePlaylist(SQLModel, table=True):
+    __tablename__ = "collaborative_playlists"
+
+    playlist_id: str = Field(primary_key=True, index=True)
+    users: List[str] = Field(sa_column=Column(ARRAY(String)))
 
 
 def get_table_name(table: Type[SQLModel]) -> str:

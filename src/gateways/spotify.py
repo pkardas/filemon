@@ -2,6 +2,7 @@ from functools import cached_property
 
 from src.gateways.auth import get_spotify
 from src.models.spotify import (
+    CreatedPlaylist,
     LovedTracks,
     RecentlyPlayed,
     SpotifyUser,
@@ -16,8 +17,8 @@ class Spotify:
     def user(self) -> SpotifyUser:
         return SpotifyUser(**self._spotify.me())
 
-    def create_playlist(self, playlist_name: str) -> None:
-        self._spotify.user_playlist_create(user=self.user.id, name=playlist_name, public=False, collaborative=True)
+    def create_playlist(self, playlist_name: str) -> CreatedPlaylist:
+        return CreatedPlaylist(**self._spotify.user_playlist_create(user=self.user.id, name=playlist_name, public=False, collaborative=True))
 
     def recently_played(self) -> RecentlyPlayed:
         return RecentlyPlayed(**self._spotify.current_user_recently_played())

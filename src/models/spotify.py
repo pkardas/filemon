@@ -67,8 +67,12 @@ class CreatePlaylist(BaseModel):
     description: str
     public: bool
 
+class CreatedPlaylist(BaseModel):
+    id: str
 
 class SpotifyUser(BaseModel):
     id: str
     display_name: str
     uri: str
+
+
