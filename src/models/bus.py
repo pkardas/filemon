@@ -1,9 +1,6 @@
 from dataclasses import dataclass
 from datetime import date
-from typing import (
-    List,
-    Optional,
-)
+from typing import List
 
 from src.models.spotify import (
     RecentlyPlayedItem,
