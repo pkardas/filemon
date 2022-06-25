@@ -1,6 +1,6 @@
 from functools import cached_property
 
-from src.gateways.auth import get_spotify
+from src.gateways.spotipy import get_spotipy
 from src.models.spotify import (
     CreatedPlaylist,
     LovedTracks,
@@ -11,7 +11,7 @@ from src.models.spotify import (
 
 class Spotify:
     def __init__(self, spotify_code: str):
-        self._spotify = get_spotify(spotify_code)
+        self._spotify = get_spotipy(spotify_code)
 
     @cached_property
     def user(self) -> SpotifyUser:

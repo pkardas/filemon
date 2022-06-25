@@ -25,6 +25,6 @@ class FilemonSpotifyOAuth(SpotifyOAuth):
         return code
 
 
-def get_spotify(spotify_code: str) -> Spotify:
+def get_spotipy(spotify_code: str) -> Spotify:
     auth = FilemonSpotifyOAuth(scope=SCOPE, spotify_response=spotify_code)
     return Spotify(auth_manager=auth)

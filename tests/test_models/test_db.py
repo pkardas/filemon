@@ -3,14 +3,20 @@ from datetime import date
 import pytest
 
 from src.models.db import (
+    CollaborativePlaylist,
     ListeningHistory,
+    User,
     get_partition_name,
     get_table_name,
 )
 
 
 @pytest.mark.parametrize("table, expected_result", [
-    (ListeningHistory, "listening_history")
+    # @formatter:off
+    (ListeningHistory,      "listening_history"),
+    (User,                  "users"),
+    (CollaborativePlaylist, "collaborative_playlists"),
+    # @formatter:on
 ])
 def test_table_name(table, expected_result):
     assert get_table_name(table) == expected_result

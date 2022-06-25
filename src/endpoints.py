@@ -7,7 +7,7 @@ from starlette.responses import (
     Response,
 )
 
-from src.gateways.auth import SCOPE
+from src.gateways.spotipy import SCOPE
 from src.message_bus.bus import MessageBus
 from src.models.api import CreatePlaylistRequest
 from src.models.bus import (
