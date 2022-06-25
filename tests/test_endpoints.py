@@ -1,8 +1,9 @@
 import os
 from unittest import mock
 
-from fakes.fake_spotipy import FakeSpotipy
-from fakes.fake_unit_of_work import FakeUnitOfWork
+from tests.fakes.fake_spotipy import FakeSpotipy
+from tests.fakes.fake_unit_of_work import FakeUnitOfWork
+
 from src.message_bus.bus import MessageBus
 
 
