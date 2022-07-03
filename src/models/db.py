@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from datetime import (
     date,
     datetime,
@@ -28,6 +29,12 @@ class ListeningHistory(SQLModel, table=True):
     user_id: str = Field(primary_key=True, index=True)
     track_uri: str = Field(primary_key=True)
     played_at: datetime = Field(primary_key=True, index=True)
+
+
+@dataclass
+class TopTrack:
+    track_uri: str
+    count: int
 
 
 class User(SQLModel, table=True):

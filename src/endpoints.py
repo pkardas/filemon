@@ -31,7 +31,7 @@ def spotify_callback(code: str):
     return RedirectResponse("https://open.spotify.com/")
 
 
-@router.post("/playlists/create")
+@router.post("/playlists")
 def create_playlist(request: CreatePlaylistRequest):
     bus.handle(AddPlaylist(users=request.users, playlist_name=request.playlist_name))
     return Response(status_code=200)

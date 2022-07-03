@@ -1,5 +1,7 @@
 from typing import List
 
+from sqlmodel import select
+
 from src.models.db import (
     CollaborativePlaylist,
     get_table_name,
@@ -18,3 +20,6 @@ class CollaborativePlaylistsRepository(Repository):
             """,  # type: ignore
             {"playlist_id": playlist_id, "users": users}
         )
+
+    def get_all(self) -> List[CollaborativePlaylist]:
+        return self.session.exec(select(CollaborativePlaylist)).all()
