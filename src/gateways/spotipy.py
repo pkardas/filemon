@@ -26,11 +26,8 @@ class DbCacheHandler(CacheHandler):
         if not self._user_id:
             return None
 
-        from src.repositories.unit_of_work import default_session
-        from src.repositories.users import UsersRepository
-
-        with default_session() as session:
-            return UsersRepository(session).get_token(self._user_id)
+        with self._session as session:
+            return self._users_repo(session).get_token(self._user_id)
 
     def save_token_to_cache(self, token_info: Dict[str, str]) -> None:
         self.token_info = token_info  # type: ignore
