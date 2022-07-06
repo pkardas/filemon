@@ -16,7 +16,7 @@ def test_spotify(api_test_client):
     assert result.history[0].status_code == 307
 
 
-@mock.patch("src.gateways.spotify.get_spotipy", lambda spotify_code: FakeSpotipy())
+@mock.patch("src.gateways.spotify.get_spotipy", lambda spotify_code, _: FakeSpotipy())
 def test_spotify_callback(api_test_client):
     fake_uow = FakeUnitOfWork()
 

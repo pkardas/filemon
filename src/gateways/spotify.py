@@ -1,6 +1,13 @@
 from functools import cached_property
+from typing import (
+    Optional,
+    List,
+)
 
-from src.gateways.spotipy import get_spotipy
+from src.gateways.spotipy import (
+    get_spotipy,
+    DbCacheHandler,
+)
 from src.models.spotify import (
     CreatedPlaylist,
     LovedTracks,
@@ -10,8 +17,12 @@ from src.models.spotify import (
 
 
 class Spotify:
-    def __init__(self, spotify_code: str):
-        self._spotify = get_spotipy(spotify_code)
+    def __init__(self, spotify_code: str, user_id: Optional[str]):
+        self._spotify = get_spotipy(spotify_code, user_id)
+
+    @property
+    def cache_handler(self) -> DbCacheHandler:
+        return self._spotify.auth_manager.cache_handler
 
     @cached_property
     def user(self) -> SpotifyUser:
@@ -26,8 +37,8 @@ class Spotify:
     def loved_tracks(self, limit: int = 20, offset: int = 0) -> LovedTracks:
         return LovedTracks(**self._spotify.current_user_saved_tracks(limit=limit, offset=offset))
 
-    def add_track(self, playlist_id: str, track_uri: str) -> None:
-        return self._spotify.playlist_add_items(playlist_id=playlist_id, items=[track_uri])
+    def add_tracks(self, playlist_id: str, track_uris: List[str]) -> None:
+        return self._spotify.playlist_add_items(playlist_id=playlist_id, items=track_uris)
 
     def get_playlist_tracks(self, playlist_id) -> LovedTracks:
         return LovedTracks(**self._spotify.playlist_items(playlist_id=playlist_id))

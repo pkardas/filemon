@@ -14,6 +14,7 @@ from sqlalchemy import (
     Column,
     String,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import (
     Field,
     SQLModel,
@@ -42,6 +43,7 @@ class User(SQLModel, table=True):
 
     id: str = Field(primary_key=True, index=True)
     spotify_code: str
+    token: str = Field(sa_column=Column(JSONB), nullable=True)
 
 
 class CollaborativePlaylist(SQLModel, table=True):

@@ -30,6 +30,10 @@ class AddPlaylist(Command):
     users: List[str]
     playlist_name: str
 
+    @property
+    def first_user(self) -> str:
+        return self.users[0]
+
 
 @dataclass
 class UpdatePartitions(Command):

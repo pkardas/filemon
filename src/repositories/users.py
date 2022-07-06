@@ -1,4 +1,9 @@
-from typing import List
+import json
+from typing import (
+    List,
+    Dict,
+    cast,
+)
 
 from sqlmodel import select
 
@@ -19,8 +24,8 @@ class UsersRepository(Repository):
 
     def add(self, user_id: str, spotify_code: str) -> None:
         self.session.execute(
-            """
-                INSERT INTO users (id, spotify_code)
+            f"""
+                INSERT INTO {self.table_name} (id, spotify_code)
                 VALUES (:user_id, :spotify_code)
                 ON CONFLICT (id) DO
                     UPDATE SET spotify_code = :spotify_code
@@ -33,4 +38,17 @@ class UsersRepository(Repository):
 
     def get_spotify(self, user_id: str) -> Spotify:
         user = self.session.exec(select(User).where(User.id == user_id)).one()
-        return Spotify(spotify_code=user.spotify_code)
+        return Spotify(spotify_code=user.spotify_code, user_id=user_id)
+
+    def add_token(self, user_id: str, token: Dict[str, str]):
+        self.session.execute(
+            f"""
+                UPDATE {self.table_name}
+                SET token = :token
+                WHERE id = :user_id
+            """,  # type: ignore
+            {"user_id": user_id, "token": json.dumps(token)}
+        )
+
+    def get_token(self, user_id: str) -> Dict[str, str]:
+        return cast(Dict[str, str], self.session.exec(select(User.token).where(User.id == user_id)).one())

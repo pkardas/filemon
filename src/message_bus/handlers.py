@@ -15,10 +15,15 @@ from src.repositories.unit_of_work import AbstractUnitOfWork
 
 
 def add_user(command: AddUser, uow: AbstractUnitOfWork):
-    spotify = Spotify(spotify_code=command.spotify_code)
+    # No 'user_id' yet:
+    spotify = Spotify(spotify_code=command.spotify_code, user_id=None)
+
     with uow:
         uow.users.add(spotify.user.id, command.spotify_code)
         uow.commit()
+
+    # 'user_id' known, update database:
+    spotify.cache_handler.save_token_to_db(spotify.user.id)
 
 
 def add_playlist(command: AddPlaylist, uow: AbstractUnitOfWork):
@@ -26,7 +31,7 @@ def add_playlist(command: AddPlaylist, uow: AbstractUnitOfWork):
         if any(not uow.users.exists(user) for user in command.users):
             raise UserDoesNotExists("User does not exist")
 
-        spotify = uow.users.get_spotify(command.users[0])
+        spotify = uow.users.get_spotify(command.first_user)
         response = spotify.create_playlist(command.playlist_name)
 
         uow.collaborative_playlists.add(command.users, response.id)
@@ -41,7 +46,7 @@ def update_partitions(command: UpdatePartitions, uow: AbstractUnitOfWork):
 
 def fetch_listening_history(command: FetchListeningHistory, uow: AbstractUnitOfWork):
     for user in uow.users.all_users:
-        spotify = Spotify(spotify_code=user.spotify_code)
+        spotify = uow.users.get_spotify(user.id)
         recently_played = spotify.recently_played()
 
         uow.listening_history.queue.extend([
@@ -67,22 +72,16 @@ def update_playlists(command: UpdatePlaylists, uow: AbstractUnitOfWork):
 
 def update_playlist(command: UpdatePlaylist, uow: AbstractUnitOfWork):
     with uow:
-        users = {
-            user: uow.users.get_spotify(user)
-            for user in command.users
-        }
-
-        users[command.first_user].clear_playlist(command.playlist_id)
+        owner = uow.users.get_spotify(command.first_user)
 
         top_tracks = [
-            (spotify_user, track.track_uri)
-            for user_id, spotify_user in users.items()
+            track.track_uri
+            for user_id in command.users
             for track in uow.listening_history.top_played_tracks(user_id)
         ]
         shuffle(top_tracks)
 
-        for user, track_uri in top_tracks:
-            user.add_track(playlist_id=command.playlist_id, track_uri=track_uri)
+        owner.add_tracks(playlist_id=command.playlist_id, track_uris=top_tracks)
 
         uow.commit()
 
