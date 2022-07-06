@@ -9,7 +9,8 @@ from typing import List
 from src.models.db import (
     ListeningHistory,
     get_partition_name,
-    get_table_name, TopTrack,
+    get_table_name,
+    TopTrack,
 )
 from src.repositories.repository import Repository
 

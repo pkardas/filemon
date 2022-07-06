@@ -40,6 +40,20 @@ class FetchListeningHistory(Command):
     pass
 
 
+class UpdatePlaylists(Command):
+    pass
+
+
+@dataclass
+class UpdatePlaylist(Command):
+    playlist_id: str
+    users: List[str]
+
+    @property
+    def first_user(self) -> str:
+        return self.users[0]
+
+
 @dataclass
 class UserPlayedMusic(Event):
     user: SpotifyUser

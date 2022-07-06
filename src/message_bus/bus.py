@@ -12,6 +12,8 @@ from src.message_bus.handlers import (
     fetch_listening_history,
     update_partitions,
     user_played_music,
+    update_playlists,
+    update_playlist,
 )
 from src.models.bus import (
     AddPlaylist,
@@ -22,6 +24,8 @@ from src.models.bus import (
     Message,
     UpdatePartitions,
     UserPlayedMusic,
+    UpdatePlaylists,
+    UpdatePlaylist,
 )
 from src.repositories.unit_of_work import AbstractUnitOfWork
 
@@ -29,7 +33,9 @@ COMMAND_HANDLERS: Dict[Type[Command], Callable] = {
     AddUser: add_user,
     AddPlaylist: add_playlist,
     UpdatePartitions: update_partitions,
-    FetchListeningHistory: fetch_listening_history
+    FetchListeningHistory: fetch_listening_history,
+    UpdatePlaylists: update_playlists,
+    UpdatePlaylist: update_playlist,
 }
 
 EVENT_HANDLERS: Dict[Type[Event], Callable] = {

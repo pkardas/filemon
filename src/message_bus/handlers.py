@@ -1,3 +1,5 @@
+from random import shuffle
+
 from src.gateways.spotify import Spotify
 from src.models.bus import (
     AddPlaylist,
@@ -5,6 +7,8 @@ from src.models.bus import (
     FetchListeningHistory,
     UpdatePartitions,
     UserPlayedMusic,
+    UpdatePlaylists,
+    UpdatePlaylist,
 )
 from src.models.errors import UserDoesNotExists
 from src.repositories.unit_of_work import AbstractUnitOfWork
@@ -47,6 +51,40 @@ def fetch_listening_history(command: FetchListeningHistory, uow: AbstractUnitOfW
             )
             for item in recently_played.items
         ])
+
+
+def update_playlists(command: UpdatePlaylists, uow: AbstractUnitOfWork):
+    with uow:
+        for playlist in uow.collaborative_playlists.get_all():
+            uow.collaborative_playlists.queue.append(
+                UpdatePlaylist(
+                    playlist_id=playlist.playlist_id,
+                    users=playlist.users
+                )
+            )
+        uow.commit()
+
+
+def update_playlist(command: UpdatePlaylist, uow: AbstractUnitOfWork):
+    with uow:
+        users = {
+            user: uow.users.get_spotify(user)
+            for user in command.users
+        }
+
+        users[command.first_user].clear_playlist(command.playlist_id)
+
+        top_tracks = [
+            (spotify_user, track.track_uri)
+            for user_id, spotify_user in users.items()
+            for track in uow.listening_history.top_played_tracks(user_id)
+        ]
+        shuffle(top_tracks)
+
+        for user, track_uri in top_tracks:
+            user.add_track(playlist_id=command.playlist_id, track_uri=track_uri)
+
+        uow.commit()
 
 
 def user_played_music(event: UserPlayedMusic, uow: AbstractUnitOfWork):
