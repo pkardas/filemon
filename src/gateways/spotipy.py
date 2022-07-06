@@ -42,12 +42,19 @@ class DbCacheHandler(CacheHandler):
         if not self.token_info:
             return
 
-        from src.repositories.unit_of_work import default_session
-        from src.repositories.users import UsersRepository
-
-        with default_session() as session:
-            UsersRepository(session).add_token(user_id, self.token_info)
+        with self._session as session:
+            self._users_repo(session).add_token(user_id, self.token_info)
             session.commit()
+
+    @property
+    def _session(self):
+        from src.repositories.unit_of_work import default_session
+        return default_session()
+
+    @property
+    def _users_repo(self):
+        from src.repositories.users import UsersRepository
+        return UsersRepository
 
 
 class FilemonSpotifyOAuth(SpotifyOAuth):
