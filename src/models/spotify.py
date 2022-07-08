@@ -42,7 +42,7 @@ class RecentlyPlayedItem(BaseModel):
     played_at: datetime
 
 
-class LovedTracksItem(BaseModel):
+class TrackItem(BaseModel):
     track: Track
     added_at: datetime
 
@@ -54,9 +54,9 @@ class RecentlyPlayed(BaseModel):
     next: Optional[str]
 
 
-class LovedTracks(BaseModel):
+class Tracks(BaseModel):
     total: int
-    items: List[LovedTracksItem]
+    items: List[TrackItem]
     limit: int
     offset: int
     next: Optional[str]

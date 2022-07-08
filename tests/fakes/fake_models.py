@@ -5,7 +5,7 @@ from factory import (
 
 from src.models.spotify import (
     CreatedPlaylist,
-    LovedTracks,
+    Tracks,
     SpotifyUser,
 )
 
@@ -28,7 +28,7 @@ class FakeCreatedPlaylist(Factory):
 
 class FakeLovedTracks(Factory):
     class Meta:
-        model = LovedTracks
+        model = Tracks
 
     total = 15
     items = []  # type: ignore

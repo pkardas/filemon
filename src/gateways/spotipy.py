@@ -11,6 +11,8 @@ from spotipy import (
     CacheHandler,
 )
 
+from src.models.bus import GetUserToken
+
 SCOPE = ["playlist-modify-private", "user-library-read", "user-read-recently-played"]
 
 
@@ -26,32 +28,13 @@ class DbCacheHandler(CacheHandler):
         if not self._user_id:
             return None
 
-        with self._session as session:
-            return self._users_repo(session).get_token(self._user_id)
+        from src.message_bus.bus import MessageBus
+        from src.repositories.unit_of_work import UnitOfWork
+
+        return MessageBus(uow=UnitOfWork()).handle(GetUserToken(user_id=self._user_id))
 
     def save_token_to_cache(self, token_info: Dict[str, str]) -> None:
         self.token_info = token_info  # type: ignore
-
-        if self._user_id:
-            self.save_token_to_db(self._user_id)
-
-    def save_token_to_db(self, user_id: str) -> None:
-        if not self.token_info:
-            return
-
-        with self._session as session:
-            self._users_repo(session).add_token(user_id, self.token_info)
-            session.commit()
-
-    @property
-    def _session(self):
-        from src.repositories.unit_of_work import default_session
-        return default_session()
-
-    @property
-    def _users_repo(self):
-        from src.repositories.users import UsersRepository
-        return UsersRepository
 
 
 class FilemonSpotifyOAuth(SpotifyOAuth):

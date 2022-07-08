@@ -13,7 +13,7 @@ from src.repositories.unit_of_work import UnitOfWork
 
 def run(bus=MessageBus(uow=UnitOfWork())):
     today = datetime.now().date()
-    for i in range(7):
+    for i in range(3):
         bus.handle(UpdatePartitions(day=today - timedelta(days=i)))
 
     bus.handle(FetchListeningHistory())

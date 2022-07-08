@@ -14,6 +14,8 @@ from src.message_bus.handlers import (
     user_played_music,
     update_playlists,
     update_playlist,
+    add_user_token,
+    get_user_token,
 )
 from src.models.bus import (
     AddPlaylist,
@@ -26,6 +28,8 @@ from src.models.bus import (
     UserPlayedMusic,
     UpdatePlaylists,
     UpdatePlaylist,
+    AddUserToken,
+    GetUserToken,
 )
 from src.repositories.unit_of_work import AbstractUnitOfWork
 
@@ -36,6 +40,8 @@ COMMAND_HANDLERS: Dict[Type[Command], Callable] = {
     FetchListeningHistory: fetch_listening_history,
     UpdatePlaylists: update_playlists,
     UpdatePlaylist: update_playlist,
+    AddUserToken: add_user_token,
+    GetUserToken: get_user_token,
 }
 
 EVENT_HANDLERS: Dict[Type[Event], Callable] = {
@@ -52,29 +58,38 @@ class MessageBus:
 
     def handle(self, message: Message):
         self.queue = [message]
+        response = None
+
         while self.queue:
             message = self.queue.pop(0)
             if isinstance(message, Command):
-                self._handle_command(message)
+                handler_response = self._handle_command(message)
             elif isinstance(message, Event):
-                self._handle_event(message)
+                handler_response = self._handle_event(message)
             else:
                 raise Exception(f"{message} was not an Event or Command")
+
+            # 'handler' is allowed to return one, and only one response from the first internal handler:
+            response = handler_response if not response else response
+
+        return response
 
     def _handle_command(self, command: Command):
         try:
             handler = COMMAND_HANDLERS[type(command)]
-            handler(command, self.uow)
+            response = handler(command, self.uow)
             self.queue.extend(self.uow.collect_new_messages())
         except Exception:
             logger.exception(f"Exception handling command {command}")
             raise
+        return response
 
     def _handle_event(self, event: Event):
         try:
             handler = EVENT_HANDLERS[type(event)]
-            handler(event, self.uow)
+            response = handler(event, self.uow)
             self.queue.extend(self.uow.collect_new_messages())
         except Exception:
             logger.exception(f"Exception handling event {event}")
             raise
+        return response

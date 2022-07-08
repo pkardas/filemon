@@ -1,7 +1,12 @@
+from datetime import (
+    datetime,
+    timedelta,
+)
 from functools import cached_property
 from typing import (
     Optional,
     List,
+    Dict,
 )
 
 from src.gateways.spotipy import (
@@ -10,7 +15,7 @@ from src.gateways.spotipy import (
 )
 from src.models.spotify import (
     CreatedPlaylist,
-    LovedTracks,
+    Tracks,
     RecentlyPlayed,
     SpotifyUser,
 )
@@ -24,6 +29,10 @@ class Spotify:
     def cache_handler(self) -> DbCacheHandler:
         return self._spotify.auth_manager.cache_handler
 
+    @property
+    def token_info(self) -> Dict[str, str]:
+        return self.cache_handler.token_info
+
     @cached_property
     def user(self) -> SpotifyUser:
         return SpotifyUser(**self._spotify.me())
@@ -32,16 +41,16 @@ class Spotify:
         return CreatedPlaylist(**self._spotify.user_playlist_create(user=self.user.id, name=playlist_name, public=False, collaborative=True))
 
     def recently_played(self) -> RecentlyPlayed:
-        return RecentlyPlayed(**self._spotify.current_user_recently_played())
+        return RecentlyPlayed(**self._spotify.current_user_recently_played(after=int((datetime.now() - timedelta(days=3)).timestamp())))
 
-    def loved_tracks(self, limit: int = 20, offset: int = 0) -> LovedTracks:
-        return LovedTracks(**self._spotify.current_user_saved_tracks(limit=limit, offset=offset))
+    def loved_tracks(self, limit: int = 20, offset: int = 0) -> Tracks:
+        return Tracks(**self._spotify.current_user_saved_tracks(limit=limit, offset=offset))
 
     def add_tracks(self, playlist_id: str, track_uris: List[str]) -> None:
         return self._spotify.playlist_add_items(playlist_id=playlist_id, items=track_uris)
 
-    def get_playlist_tracks(self, playlist_id) -> LovedTracks:
-        return LovedTracks(**self._spotify.playlist_items(playlist_id=playlist_id))
+    def get_playlist_tracks(self, playlist_id) -> Tracks:
+        return Tracks(**self._spotify.playlist_items(playlist_id=playlist_id))
 
     def clear_playlist(self, playlist_id: str) -> None:
         while True:

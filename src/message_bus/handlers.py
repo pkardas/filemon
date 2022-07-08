@@ -1,4 +1,5 @@
-from random import shuffle
+import itertools
+from typing import Dict
 
 from src.gateways.spotify import Spotify
 from src.models.bus import (
@@ -9,6 +10,8 @@ from src.models.bus import (
     UserPlayedMusic,
     UpdatePlaylists,
     UpdatePlaylist,
+    AddUserToken,
+    GetUserToken,
 )
 from src.models.errors import UserDoesNotExists
 from src.repositories.unit_of_work import AbstractUnitOfWork
@@ -23,7 +26,23 @@ def add_user(command: AddUser, uow: AbstractUnitOfWork):
         uow.commit()
 
     # 'user_id' known, update database:
-    spotify.cache_handler.save_token_to_db(spotify.user.id)
+    uow.users.queue.append(
+        AddUserToken(
+            user_id=spotify.user.id,
+            token_info=spotify.token_info
+        )
+    )
+
+
+def add_user_token(command: AddUserToken, uow: AbstractUnitOfWork):
+    with uow:
+        uow.users.add_token(command.user_id, command.token_info)
+        uow.commit()
+
+
+def get_user_token(command: GetUserToken, uow: AbstractUnitOfWork) -> Dict[str, str]:
+    with uow:
+        return uow.users.get_token(command.user_id)
 
 
 def add_playlist(command: AddPlaylist, uow: AbstractUnitOfWork):
@@ -74,14 +93,17 @@ def update_playlist(command: UpdatePlaylist, uow: AbstractUnitOfWork):
     with uow:
         owner = uow.users.get_spotify(command.first_user)
 
-        top_tracks = [
-            track.track_uri
+        users_top_tracks = [
+            (track.track_uri for track in uow.listening_history.top_played_tracks(user_id))
             for user_id in command.users
-            for track in uow.listening_history.top_played_tracks(user_id)
         ]
-        shuffle(top_tracks)
 
-        owner.add_tracks(playlist_id=command.playlist_id, track_uris=top_tracks)
+        owner.clear_playlist(command.playlist_id)
+        owner.add_tracks(
+            playlist_id=command.playlist_id,
+            # Overlap songs:
+            track_uris=list(itertools.chain(*zip(*users_top_tracks)))
+        )
 
         uow.commit()
 
