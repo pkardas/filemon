@@ -27,5 +27,6 @@ resource "aws_db_instance" "database-instance" {
   db_subnet_group_name = aws_db_subnet_group.db-subnet.name
   multi_az             = false
   username             = "filemon"
+  db_name              = "filemon"
   password             = var.db_password
 }
