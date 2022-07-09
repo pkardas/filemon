@@ -20,8 +20,8 @@ class FakeUsersRepository(UsersRepository):
     def all_users(self) -> List[User]:
         return self._users
 
-    def add(self, user_id: str, spotify_code: str) -> None:
-        self._users.append(User(id=user_id, spotify_code=spotify_code))
+    def add(self, user_id: str, user_name: str, spotify_code: str) -> None:
+        self._users.append(User(id=user_id, name=user_name, spotify_code=spotify_code))
 
 
 class FakeListeningHistoryRepository(ListeningHistoryRepository):

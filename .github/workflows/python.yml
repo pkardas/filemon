@@ -1,0 +1,30 @@
+name: "Python"
+
+on: [ push ]
+
+jobs:
+  hello_world_job:
+    runs-on: ubuntu-latest
+    name: "Python"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: 'Create env file'
+        run: cp .env.example .env
+
+      - name: Build the stack
+        run: docker-compose build filemon
+
+      - name: flake8
+        run: make test-flake8
+
+      - name: mypy
+        run: make test-mypy
+
+      - name: pytest
+        run: make test-pytest
+
+      - name: Stop containers
+        if: always()
+        run: docker-compose down
