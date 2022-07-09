@@ -22,6 +22,7 @@ resource "aws_db_instance" "database-instance" {
   instance_class       = "db.t2.micro"
   engine               = "postgres"
   engine_version       = "14.3"
+  allocated_storage    = 10
   availability_zone    = "eu-central-1a"
   db_subnet_group_name = aws_db_subnet_group.db-subnet.name
   multi_az             = false
