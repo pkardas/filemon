@@ -5,7 +5,7 @@ on: [ push ]
 jobs:
   hello_world_job:
     runs-on: ubuntu-latest
-    name: A job to say hello
+    name: "Python"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -17,13 +17,13 @@ jobs:
         run: docker-compose up -d filemon
 
       - name: flake8
-        run: flake8 .
+        run: docker-compose run --rm filemon flake8 .
 
       - name: mypy
-        run: mypy .
+        run: docker-compose run --rm filemon mypy .
 
       - name: pytest
-        run: pytest .
+        run: docker-compose run --rm filemon pytest .
 
       - name: Stop containers
         if: always()
