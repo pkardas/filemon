@@ -22,15 +22,15 @@ class UsersRepository(Repository):
     def all_users(self) -> List[User]:
         return self.session.exec(select(User)).all()
 
-    def add(self, user_id: str, spotify_code: str) -> None:
+    def add(self, user_id: str, user_name: str, spotify_code: str) -> None:
         self.session.execute(
             f"""
-                INSERT INTO {self.table_name} (id, spotify_code)
-                VALUES (:user_id, :spotify_code)
+                INSERT INTO {self.table_name} (id, name, spotify_code)
+                VALUES (:user_id, :name, :spotify_code)
                 ON CONFLICT (id) DO
                     UPDATE SET spotify_code = :spotify_code
             """,  # type: ignore
-            {"user_id": user_id, "spotify_code": spotify_code}
+            {"user_id": user_id, "name": user_name, "spotify_code": spotify_code}
         )
 
     def exists(self, user_id: str) -> bool:

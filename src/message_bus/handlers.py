@@ -22,7 +22,7 @@ def add_user(command: AddUser, uow: AbstractUnitOfWork):
     spotify = Spotify(spotify_code=command.spotify_code, user_id=None)
 
     with uow:
-        uow.users.add(spotify.user.id, command.spotify_code)
+        uow.users.add(spotify.user.id, spotify.user.display_name, command.spotify_code)
         uow.commit()
 
     # 'user_id' known, update database:

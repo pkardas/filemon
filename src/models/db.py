@@ -42,6 +42,7 @@ class User(SQLModel, table=True):
     __tablename__ = "users"
 
     id: str = Field(primary_key=True, index=True)
+    name: str = Field(index=True)
     spotify_code: str
     token: str = Field(sa_column=Column(JSONB), nullable=True)
 
