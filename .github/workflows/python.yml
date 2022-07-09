@@ -1,0 +1,20 @@
+name: "Python"
+
+on: [push]
+
+jobs:
+  hello_world_job:
+    runs-on: ubuntu-latest
+    name: A job to say hello
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: flake8
+        run: docker-compose run --rm filemon flake8 .
+
+      - name: mypy
+        run: docker-compose run --rm filemon mypy .
+
+      - name: pytest
+        run: docker-compose run --rm filemon pytest .

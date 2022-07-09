@@ -13,6 +13,10 @@ class FakeSpotipy:
         return Mock()
 
     # noinspection PyMethodMayBeStatic
+    def cache_handler(self):
+        return Mock()
+
+    # noinspection PyMethodMayBeStatic
     def me(self, **kwargs):
         return FakeSpotifyUser().dict()
 
