@@ -15,7 +15,7 @@ def run(bus=MessageBus(uow=UnitOfWork())):
 
 def run_loop():
     logger.info("Worker updating playlists registered.")
-    while not event.wait(timeout=60 * 45):
+    while not event.wait(timeout=60 * 10):
         logger.info("Updating playlists...")
         run()
 
