@@ -21,6 +21,7 @@ services:
       context: .
       dockerfile: Dockerfile
     command: uvicorn api:app --host 0.0.0.0 --reload
+    tty: true
     volumes:
       - ./:/src
     env_file:
