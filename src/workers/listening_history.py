@@ -26,7 +26,7 @@ def run(bus=MessageBus(uow=UnitOfWork())):
 
 def run_loop():
     logger.info("Worker fetching listening history registered.")
-    while not event.wait(timeout=60 * 5):
+    while not event.wait(timeout=60 * 45):
         logger.info("Fetching listening history...")
         run()
 
