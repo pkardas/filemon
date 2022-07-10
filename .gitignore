@@ -1,4 +1,5 @@
 git-user.sh
 .env
+.exports
 .cache
 .mypy_cache
