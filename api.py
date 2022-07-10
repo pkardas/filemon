@@ -1,3 +1,4 @@
+import logging
 from threading import Thread
 
 from fastapi import FastAPI
@@ -7,6 +8,8 @@ from src.workers import (
     collaborative_playlists,
     listening_history,
 )
+
+logging.basicConfig(level=2)
 
 app = FastAPI()
 app.include_router(endpoints.router)

@@ -1,3 +1,4 @@
+import logging
 from datetime import (
     datetime,
     timedelta,
@@ -12,6 +13,7 @@ from src.models.bus import (
 from src.repositories.unit_of_work import UnitOfWork
 
 event = Event()
+logger = logging.getLogger("listening_history")
 
 
 def run(bus=MessageBus(uow=UnitOfWork())):
@@ -23,7 +25,9 @@ def run(bus=MessageBus(uow=UnitOfWork())):
 
 
 def run_loop():
+    logger.info("Worker fetching listening history registered.")
     while not event.wait(timeout=60 * 60 * 2):
+        logger.info("Fetching listening history...")
         run()
 
 
