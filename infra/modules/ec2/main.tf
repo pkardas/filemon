@@ -19,8 +19,4 @@ resource "tls_private_key" "_" {
 resource "aws_key_pair" "_" {
   key_name   = var.key_name
   public_key = tls_private_key._.public_key_openssh
-
-  provisioner "local-exec" {
-    command = "echo '${tls_private_key._.private_key_pem}' > ./my_key.pem"
-  }
 }

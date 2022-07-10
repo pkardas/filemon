@@ -1,5 +1,6 @@
 resource "aws_vpc" "_" {
-  cidr_block = var.vpc_cidr
+  cidr_block           = var.vpc_cidr
+  enable_dns_hostnames = true
 }
 
 resource "aws_internet_gateway" "_" {
@@ -13,9 +14,9 @@ resource "aws_route_table" "_" {
     for_each = var.route
 
     content {
-      cidr_block          = route.value.cidr_block
-      gateway_id          = route.value.gateway_id
-      nat_gateway_id      = route.value.nat_gateway_id
+      cidr_block     = route.value.cidr_block
+      gateway_id     = route.value.gateway_id
+      nat_gateway_id = route.value.nat_gateway_id
     }
   }
 }
