@@ -1,25 +1,18 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "3.26.0"
-    }
-    random = {
-      source  = "hashicorp/random"
-      version = "3.0.1"
-    }
-  }
-  required_version = ">= 1.1.0"
-
-  cloud {
-    organization = "pkardas"
-
-    workspaces {
-      name = "filemon"
-    }
-  }
+provider "google" {
+  project = "filemon-355819"
+  region  = "europe-central2"
 }
 
-provider "aws" {
-  region = var.region
+terraform {
+  backend "gcs" {
+      bucket = "filemon-tf-state"
+    prefix = "terraform/state"
+  }
+
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 4.0"
+    }
+  }
 }
