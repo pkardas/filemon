@@ -33,12 +33,15 @@ class UsersRepository(Repository):
             {"user_id": user_id, "name": user_name, "spotify_code": spotify_code}
         )
 
-    def exists(self, user_id: str) -> bool:
-        return any(self.session.exec(select(User).where(User.id == user_id)).all())
+    def exists(self, user_name: str) -> bool:
+        return any(self.session.exec(select(User).where(User.name == user_name)).all())
 
     def get_spotify(self, user_id: str) -> Spotify:
         user = self.session.exec(select(User).where(User.id == user_id)).one()
         return Spotify(spotify_code=user.spotify_code, user_id=user_id)
+
+    def get_user_id(self, user_name: str) -> str:
+        return self.session.exec(select(User).where(User.name == user_name)).one().id
 
     def add_token(self, user_id: str, token: Dict[str, str]):
         self.session.execute(

@@ -50,7 +50,7 @@ def add_playlist(command: AddPlaylist, uow: AbstractUnitOfWork):
         if any(not uow.users.exists(user) for user in command.users):
             raise UserDoesNotExists("User does not exist")
 
-        spotify = uow.users.get_spotify(command.first_user)
+        spotify = uow.users.get_spotify(user_id=uow.users.get_user_id(command.first_user))
         response = spotify.create_playlist(command.playlist_name)
 
         uow.collaborative_playlists.add(command.users, response.id)
@@ -91,11 +91,12 @@ def update_playlists(command: UpdatePlaylists, uow: AbstractUnitOfWork):
 
 def update_playlist(command: UpdatePlaylist, uow: AbstractUnitOfWork):
     with uow:
-        owner = uow.users.get_spotify(command.first_user)
+        user_id = uow.users.get_user_id(command.first_user)
+        owner = uow.users.get_spotify(user_id=user_id)
 
         users_top_tracks = [
-            (track.track_uri for track in uow.listening_history.top_played_tracks(user_id))
-            for user_id in command.users
+            (track.track_uri for track in uow.listening_history.top_played_tracks(uow.users.get_user_id(user_name)))
+            for user_name in command.users
         ]
 
         owner.clear_playlist(command.playlist_id)
