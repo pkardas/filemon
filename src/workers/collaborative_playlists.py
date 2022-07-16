@@ -14,10 +14,14 @@ def run(bus=MessageBus(uow=UnitOfWork())):
 
 
 def run_loop():
-    logger.info("Worker updating playlists registered.")
-    while not event.wait(timeout=60 * 60 * 12):
+    while True:
         logger.info("Updating playlists...")
         run()
+        logger.info("Playlist update finished.")
+
+        logger.info("Next playlist update in 12 hours...")
+        if event.wait(timeout=60 * 60 * 12):
+            break
 
 
 if __name__ == '__main__':
