@@ -10,7 +10,7 @@ from starlette.responses import (
 from src.gateways.spotipy import SCOPE
 from src.message_bus.bus import MessageBus
 from src.models.api import CreatePlaylistRequest
-from src.models.bus import (
+from src.models.messages import (
     AddPlaylist,
     AddUser,
 )

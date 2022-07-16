@@ -7,7 +7,12 @@ from sqlmodel import (
     create_engine,
 )
 
-from src.models.db import ListeningHistory
+from src.models.db import (
+    CollaborativePlaylist,
+    ListeningHistory,
+    Track,
+    User,
+)
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -17,7 +22,10 @@ config = context.config
 
 # List of tracked tables:
 _tables = (
+    CollaborativePlaylist,
     ListeningHistory,
+    Track,
+    User
 )
 
 # Interpret the config file for Python logging.

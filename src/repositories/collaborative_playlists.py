@@ -15,11 +15,11 @@ class CollaborativePlaylistsRepository(Repository):
     def add(self, users: List[str], playlist_id: str) -> None:
         self.session.execute(
             f"""
-                INSERT INTO {self.table_name} (playlist_id, users)
-                VALUES (:playlist_id, :users);
+                INSERT INTO {self.table_name} (playlist_id, users, active)
+                VALUES (:playlist_id, :users, TRUE);
             """,  # type: ignore
             {"playlist_id": playlist_id, "users": users}
         )
 
     def get_all(self) -> List[CollaborativePlaylist]:
-        return self.session.exec(select(CollaborativePlaylist)).all()
+        return self.session.exec(select(CollaborativePlaylist).where(CollaborativePlaylist.active == True)).all()

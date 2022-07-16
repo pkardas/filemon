@@ -17,7 +17,7 @@ from src.message_bus.handlers import (
     add_user_token,
     get_user_token,
 )
-from src.models.bus import (
+from src.models.messages import (
     AddPlaylist,
     AddUser,
     Command,
@@ -36,12 +36,12 @@ from src.repositories.unit_of_work import AbstractUnitOfWork
 COMMAND_HANDLERS: Dict[Type[Command], Callable] = {
     AddUser: add_user,
     AddPlaylist: add_playlist,
-    UpdatePartitions: update_partitions,
-    FetchListeningHistory: fetch_listening_history,
-    UpdatePlaylists: update_playlists,
-    UpdatePlaylist: update_playlist,
     AddUserToken: add_user_token,
     GetUserToken: get_user_token,
+    UpdatePlaylist: update_playlist,
+    UpdatePlaylists: update_playlists,
+    UpdatePartitions: update_partitions,
+    FetchListeningHistory: fetch_listening_history,
 }
 
 EVENT_HANDLERS: Dict[Type[Event], Callable] = {

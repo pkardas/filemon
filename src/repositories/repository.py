@@ -2,7 +2,7 @@ from typing import List
 
 from sqlmodel import Session
 
-from src.models.bus import Message
+from src.models.messages import Message
 
 
 class Repository:

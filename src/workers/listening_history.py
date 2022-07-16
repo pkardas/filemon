@@ -6,7 +6,7 @@ from datetime import (
 from threading import Event
 
 from src.message_bus.bus import MessageBus
-from src.models.bus import (
+from src.models.messages import (
     FetchListeningHistory,
     UpdatePartitions,
 )

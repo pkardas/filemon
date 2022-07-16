@@ -26,7 +26,7 @@ class FakeCreatedPlaylist(Factory):
     id = Faker("uuid4")
 
 
-class FakeLovedTracks(Factory):
+class FakeTracks(Factory):
     class Meta:
         model = Tracks
 

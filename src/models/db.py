@@ -52,6 +52,14 @@ class CollaborativePlaylist(SQLModel, table=True):
 
     playlist_id: str = Field(primary_key=True, index=True)
     users: List[str] = Field(sa_column=Column(ARRAY(String)))
+    active: bool = Field(default=True, nullable=False)
+
+
+class Track(SQLModel, table=True):
+    __tablename__ = "tracks"
+
+    track_uri: str = Field(primary_key=True, index=True)
+    album_uri: str = Field(primary_key=True, index=True)
 
 
 def get_table_name(table: Type[SQLModel]) -> str:

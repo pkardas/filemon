@@ -2,7 +2,7 @@ import logging
 from threading import Event
 
 from src.message_bus.bus import MessageBus
-from src.models.bus import UpdatePlaylists
+from src.models.messages import UpdatePlaylists
 from src.repositories.unit_of_work import UnitOfWork
 
 event = Event()
@@ -21,4 +21,4 @@ def run_loop():
 
 
 if __name__ == '__main__':
-    run_loop()
+    run()

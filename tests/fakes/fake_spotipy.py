@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 from fakes.fake_models import (
     FakeCreatedPlaylist,
-    FakeLovedTracks,
+    FakeTracks,
     FakeSpotifyUser,
 )
 
@@ -30,4 +30,4 @@ class FakeSpotipy:
 
     # noinspection PyMethodMayBeStatic
     def current_user_saved_tracks(self, **kwargs):
-        return FakeLovedTracks().dict()
+        return FakeTracks().dict()

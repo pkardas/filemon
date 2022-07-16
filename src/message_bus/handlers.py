@@ -2,7 +2,8 @@ import itertools
 from typing import Dict
 
 from src.gateways.spotify import Spotify
-from src.models.bus import (
+from src.models.errors import UserDoesNotExists
+from src.models.messages import (
     AddPlaylist,
     AddUser,
     FetchListeningHistory,
@@ -13,7 +14,6 @@ from src.models.bus import (
     AddUserToken,
     GetUserToken,
 )
-from src.models.errors import UserDoesNotExists
 from src.repositories.unit_of_work import AbstractUnitOfWork
 
 
@@ -112,4 +112,6 @@ def update_playlist(command: UpdatePlaylist, uow: AbstractUnitOfWork):
 def user_played_music(event: UserPlayedMusic, uow: AbstractUnitOfWork):
     with uow:
         uow.listening_history.add(user_id=event.user.id, track_uri=event.recently_played.track.uri, played_at=event.recently_played.played_at)
+        uow.tracks.add(track_uri=event.recently_played.track.uri, album_uri=event.recently_played.track.album.uri)
+
         uow.commit()

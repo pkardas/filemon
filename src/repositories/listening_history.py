@@ -39,7 +39,7 @@ class ListeningHistoryRepository(Repository):
                     WHERE user_id = :user_id AND played_at >= :played_at
                     GROUP BY track_uri
                     ORDER BY frequency DESC
-                    LIMIT 10
+                    LIMIT 15;
                 """,  # type: ignore
                 {"user_id": user_id, "played_at": datetime.now() - timedelta(days=3)}
             ).all()

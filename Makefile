@@ -21,3 +21,9 @@ alembic-upgrade:
 
 alembic-downgrade:
 	docker-compose run --rm filemon alembic downgrade -1
+
+ec2-build:
+	sudo docker-compose build api
+
+ec2-run:
+	sudo docker-compose up --detach api

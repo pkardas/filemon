@@ -11,7 +11,7 @@ from spotipy import (
     CacheHandler,
 )
 
-from src.models.bus import GetUserToken
+from src.models.messages import GetUserToken
 
 SCOPE = ["playlist-modify-private", "user-library-read", "user-read-recently-played"]
 
