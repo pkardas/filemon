@@ -12,9 +12,9 @@ from sqlmodel import (
     create_engine,
 )
 
-from repositories.tracks import TracksRepository
 from src.repositories.collaborative_playlists import CollaborativePlaylistsRepository
 from src.repositories.listening_history import ListeningHistoryRepository
+from src.repositories.tracks import TracksRepository
 from src.repositories.users import UsersRepository
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
