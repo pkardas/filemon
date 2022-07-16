@@ -22,4 +22,4 @@ class CollaborativePlaylistsRepository(Repository):
         )
 
     def get_all(self) -> List[CollaborativePlaylist]:
-        return self.session.exec(select(CollaborativePlaylist).where(CollaborativePlaylist.active == True)).all()
+        return self.session.exec(select(CollaborativePlaylist).where(CollaborativePlaylist.active == True)).all()  # noqa: E712, ORM does not work with '... is True'
