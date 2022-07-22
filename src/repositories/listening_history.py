@@ -33,11 +33,27 @@ class ListeningHistoryRepository(Repository):
         return [
             TopTrack(*row)
             for row in self.session.execute(
+                # Get top played tracks for a user, max 2 tracks from one album:
                 f"""
-                    SELECT track_uri, COUNT(*) AS frequency
-                    FROM {self.table_name}
-                    WHERE user_id = :user_id AND played_at >= :played_at
-                    GROUP BY track_uri
+                    WITH top_tracks AS (
+                        SELECT
+                            listening_history.track_uri,
+                            tracks.album_uri,
+                            COUNT(*) AS frequency,
+                            ROW_NUMBER() OVER(
+                                PARTITION BY tracks.album_uri
+                                ORDER BY COUNT(listening_history.track_uri) DESC
+                            ) AS rank
+                        FROM listening_history
+                        LEFT OUTER JOIN tracks ON listening_history.track_uri = tracks.track_uri
+                        WHERE user_id = 'logx.pl' AND played_at >= '2022-01-01'
+                        GROUP BY listening_history.track_uri, tracks.album_uri
+                    )
+                    SELECT
+                        track_uri,
+                        frequency
+                    FROM top_tracks
+                    WHERE rank <= 2
                     ORDER BY frequency DESC
                     LIMIT 15;
                 """,  # type: ignore
