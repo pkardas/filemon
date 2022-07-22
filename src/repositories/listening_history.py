@@ -11,12 +11,14 @@ from src.models.db import (
     get_partition_name,
     get_table_name,
     TopTrack,
+    Track,
 )
 from src.repositories.repository import Repository
 
 
 class ListeningHistoryRepository(Repository):
     table_name = get_table_name(ListeningHistory)
+    join_table_name = get_table_name(Track)
     partition_name = partial(get_partition_name, ListeningHistory)
 
     def add(self, user_id: str, track_uri: str, played_at: datetime) -> None:
@@ -44,8 +46,8 @@ class ListeningHistoryRepository(Repository):
                                 PARTITION BY tracks.album_uri
                                 ORDER BY COUNT(listening_history.track_uri) DESC
                             ) AS rank
-                        FROM listening_history
-                        LEFT OUTER JOIN tracks ON listening_history.track_uri = tracks.track_uri
+                        FROM {self.table_name} AS listening_history
+                        LEFT OUTER JOIN {self.join_table_name} AS tracks ON listening_history.track_uri = tracks.track_uri
                         WHERE user_id = :user_id AND played_at >= :played_at
                         GROUP BY listening_history.track_uri, tracks.album_uri
                     )
