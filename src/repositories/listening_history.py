@@ -46,7 +46,7 @@ class ListeningHistoryRepository(Repository):
                             ) AS rank
                         FROM listening_history
                         LEFT OUTER JOIN tracks ON listening_history.track_uri = tracks.track_uri
-                        WHERE user_id = 'logx.pl' AND played_at >= '2022-01-01'
+                        WHERE user_id = :user_id AND played_at >= :played_at
                         GROUP BY listening_history.track_uri, tracks.album_uri
                     )
                     SELECT
