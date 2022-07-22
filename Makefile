@@ -23,7 +23,7 @@ alembic-downgrade:
 	docker-compose run --rm filemon alembic downgrade -1
 
 ec2-stop:
-	sudo docker stop $(sudo docker ps -aq)
+	sudo docker stop $$(sudo docker ps -aq)
 
 ec2-pull:
 	git pull
