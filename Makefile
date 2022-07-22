@@ -22,11 +22,20 @@ alembic-upgrade:
 alembic-downgrade:
 	docker-compose run --rm filemon alembic downgrade -1
 
-ec2-migrate:
-	sudo docker-compose run --rm filemon alembic upgrade head
+ec2-stop:
+	sudo docker stop $(docker ps -aq)
+
+ec2-pull:
+	git pull
 
 ec2-build:
 	sudo docker-compose build api
 
+ec2-migrate:
+	sudo docker-compose run --rm filemon alembic upgrade head
+
 ec2-run:
 	sudo docker-compose up --detach api
+
+ec2-manual-deploy:
+	make ec2-stop && make ec2-pull && make ec2-build && make ec2-migrate && make ec2-run
